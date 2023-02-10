@@ -6,9 +6,9 @@ from io import BytesIO
 import requests
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QRadioButton
 
-SCREEN_SIZE = [1000, 1000]
+SCREEN_SIZE = [600, 800]
 
 
 class Example(QWidget):
@@ -18,6 +18,15 @@ class Example(QWidget):
         self.setWindowTitle('Отображение карты')
         self.image = QLabel(self)
         self.image.move(0, 0)
+        self.btn = QRadioButton(self)
+        self.btn_2 = QRadioButton(self)
+        self.btn_3 = QRadioButton(self)
+        self.btn.move(5, 10)
+        self.btn_2.move(5, 30)
+        self.btn_3.move(5, 50)
+        self.btn.setText('Схема')
+        self.btn_2.setText('Спутник')
+        self.btn_3.setText('Гибрид')
         self.image.resize(*SCREEN_SIZE)
         self.params = {
             "ll": ",".join(map_request[0]),
@@ -25,6 +34,33 @@ class Example(QWidget):
             "l": map_request[2],
             "z": "8"
         }
+        self.btn.clicked.connect(self.scheme)
+        self.btn_2.clicked.connect(self.satellite)
+        self.btn_3.clicked.connect(self.hybrid)
+        self.getImage()
+
+    def scheme(self):
+        print(self.params['l'])
+        if self.params['l'] == 'sat':
+            self.params['l'] = 'map'
+        elif self.params['l'] == 'sat,skl':
+            self.params['l'] = 'map'
+        self.getImage()
+
+    def satellite(self):
+        print(self.params['l'])
+        if self.params['l'] == 'map':
+            self.params['l'] = 'sat'
+        elif self.params['l'] == 'sat,skl':
+            self.params['l'] = 'sat'
+        self.getImage()
+
+    def hybrid(self):
+        print(self.params['l'])
+        if self.params['l'] == 'sat':
+            self.params['l'] = 'sat,skl'
+        elif self.params['l'] == 'map':
+            self.params['l'] = 'sat,skl'
         self.getImage()
 
     def keyPressEvent(self, event):
